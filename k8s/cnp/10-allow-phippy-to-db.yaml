@@ -1,0 +1,16 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "10-allow-phippy-api-to-phippy-db"
+spec:
+  endpointSelector:
+    matchLabels:
+      app: phippy-db
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        app: phippy-api
+    toPorts:
+    - ports:
+      - port: '6379'
+        protocol: TCP

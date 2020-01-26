@@ -1,0 +1,64 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: guestbook-api
+spec:
+  replicas: 1
+#  minReadySeconds: 15
+  selector:
+    matchLabels:
+      app: guestbook-api 
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: guestbook-api
+    spec:
+      containers:
+      - name: guestbook-api
+        image: hlesey/guestbook-api:1.0
+        ports:
+        - name: http-alt
+          containerPort: 8080
+        env:
+          - name: REDIS_PORT
+            value: "6379"
+          - name: REDIS_HOST
+            value: "phippy-db"
+        resources:
+          requests:
+            cpu: "20m"
+            memory: "10Mi"
+        imagePullPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: guestbook-api
+spec:
+  selector:
+    app: guestbook-api
+  ports:
+  - name: http
+    port: 80
+    targetPort: http-alt
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: guestbook-api
+spec:
+  rules:
+  - host: guestbook-api.local
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: guestbook-api
+          servicePort: http

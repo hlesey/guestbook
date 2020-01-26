@@ -1,0 +1,24 @@
+guestbook-ui:
+  image: hlesey/guestbook-ui:1.0
+  ports:
+    - "80:80"
+  environment:
+    - API_URL=http://guestbook-api:8080
+  volumes:
+    - ${PWD}/src/guestbook-ui/index.php:/var/www/html/index.php
+    - ${PWD}/src/guestbook-ui/components:/var/www/html/components
+  links:
+    - guestbook-api
+guestbook-api:
+  image: hlesey/guestbook-api:1.0
+  ports:
+    - "8080:8080"
+  environment:
+    - REDIS_HOST=redis
+    - REDIS_PORT=6379
+  links:
+    - redis
+redis:
+  image: hlesey/redis:latest
+  ports:
+    - "6379:6379"

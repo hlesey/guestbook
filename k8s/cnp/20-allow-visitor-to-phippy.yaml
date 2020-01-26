@@ -1,0 +1,17 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "20-allow-visitors-to-phippy-api"
+spec:
+  endpointSelector:
+    matchLabels:
+      app: phippy-api
+  ingress:
+  - toPorts:
+    - ports:
+      - port: '8080'
+        protocol: TCP
+      rules:
+        http:
+        - method: GET
+          path: "/objects"

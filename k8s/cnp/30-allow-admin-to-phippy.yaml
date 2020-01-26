@@ -1,0 +1,16 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "30-allow-admin-to-phippy-api"
+spec:
+  endpointSelector:
+    matchLabels:
+      app: phippy-api
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        app: phippy-admin
+    toPorts:
+    - ports:
+      - port: '8080'
+        protocol: TCP
